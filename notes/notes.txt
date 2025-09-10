@@ -59,3 +59,22 @@ The development process will follow these steps:
 
 This strategy keeps the `main` branch clean, stable, and always in a deployable state. It isolates the development of new features, preventing unstable or in-progress code from breaking the main application. This makes it much easier to manage individual tasks, track changes, and debug issues without disrupting the entire project.
 
+
+
+#######################################
+# Django Setup
+#######################################
+
+Project Name: `backtesting_platform`. This name was chosen to clearly define the project's primary purpose as the main settings holder for the backtesting and simulation features.
+
+App Name: `paper_trader`. I named this app to reflect its core function, which will be to handle the logic for running trading strategies, connecting to the brokerage API, and managing the real-time simulation dashboard.
+
+#######################################
+# Virtual Environment Choices
+#######################################
+
+Choice: `venv`
+
+Reason: I chose `venv` because it is the standard, built-in virtual environment tool for Python 3. It requires no external installation, is lightweight, and integrates seamlessly with any workflow. It is the official recommendation from the Python community and is perfectly capable of managing all the dependencies for this Django project.
+
+
