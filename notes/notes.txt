@@ -12,3 +12,19 @@ I have selected **Idea #3, the Simple Strategy Builder with Real-Time Simulation
 
 This idea provides the best balance of features for an assignment of this scope. It introduces several key concepts essential for building trading systems: API integration for data, building a backtesting engine, and simulating real-time events. While the strategy builder itself will be simple, it provides a solid foundation and a much more engaging and realistic experience than a purely manual or pre-canned system. The technical challenges, like handling API data and asynchronous tasks, make it a great learning experience.
 
+
+
+
+#######################################
+# Wireframe Notes
+#######################################
+
+The wireframes for this platform prioritize real-time information and a clear, intuitive interface for building and monitoring strategies.
+
+*   **login.png:** A straightforward and secure login screen to protect user-created strategies and portfolio data.
+
+*   **dashboard.png:** The dashboard is focused on live data. The most critical information—current portfolio value and live P/L—is displayed prominently at the top for immediate feedback. The live chart and open positions table provide the necessary details for monitoring the strategy's performance in real-time.
+
+*   **core_feature.png (Strategy Builder):** The design of the strategy builder aims for simplicity. Using dropdowns to construct rules (e.g., "IF-THEN") makes it accessible even to users without a programming background. The goal is to allow for the creation of simple, rule-based strategies without overwhelming the user.
+
+*   **error_state.png:** I chose to show an API connection error for the error state. Since this application depends on an external data source, handling connection failures is a critical aspect of the user experience. The "Retry Connection" button provides an immediate, actionable step for the user.
