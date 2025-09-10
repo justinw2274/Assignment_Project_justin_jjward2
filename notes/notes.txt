@@ -1,0 +1,14 @@
+## Initial Brainstorming
+I considered three different angles for the paper trading and backtesting platform.
+
+1.  **Manual Backtester:** A platform where a user could manually step through historical data candle by candle and simulate "buying" or "selling." The app would track the P/L. This would be easy to implement but not very powerful.
+
+2.  **Backtester with Pre-built Strategies:** A platform with a few hard-coded strategies (e.g., a simple moving average crossover) that a user could run on different stocks. This would demonstrate backtesting but wouldn't allow for user creativity.
+
+3.  **Simple Strategy Builder with Real-Time Simulation:** A platform where users can define their own simple, rule-based strategies (e.g., "buy when RSI is below 30"). The app would then connect to a brokerage API (like Alpaca) to run the strategy against historical data (backtesting) and simulate it in real-time with live data (paper trading).
+
+## Selection Rationale
+I have selected **Idea #3, the Simple Strategy Builder with Real-Time Simulation**.
+
+This idea provides the best balance of features for an assignment of this scope. It introduces several key concepts essential for building trading systems: API integration for data, building a backtesting engine, and simulating real-time events. While the strategy builder itself will be simple, it provides a solid foundation and a much more engaging and realistic experience than a purely manual or pre-canned system. The technical challenges, like handling API data and asynchronous tasks, make it a great learning experience.
+
