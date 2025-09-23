@@ -8,13 +8,15 @@ def trade_list_http(request):
 
     all_trades = Trade.objects.all()
 
-    template = loader.get_template("papertrader/trade_list.html")
+    template = loader.get_template("paper_trader/trade_list.html")
 
     context = {
         "trades": all_trades,
     }
 
-    return HttpResponse(template.render(context, request))
+    html_output = template.render(context, request)
+
+    return HttpResponse(html_output)
 
 
 def trade_list_render(request):
@@ -25,4 +27,4 @@ def trade_list_render(request):
         "trades": all_trades,
     }
 
-    return render(request, "papertrader/trade_list.html", context)
+    return render(request, "paper_trader/trade_list.html", context)
