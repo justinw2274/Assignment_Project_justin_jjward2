@@ -104,3 +104,12 @@ I used the Django Admin interface to seed the test data.
 3.  Added 7 trades and linked them to the strategies.
 4.  Verified the `on_delete=PROTECT` constraint by attempting to delete a strategy that had trades, which also failed as expected. This confirms the relationships and protections are working correctly.
 
+**Why Two Views?**
+The purpose of writing two separate views was to directly compare the manual, low-level process of returning an HTTP response with Django's high-level `render()` shortcut. This exercise demonstrates how `render()` abstracts away the steps of loading a template and packaging it into an `HttpResponse`, which reduces boilerplate code and improves readability.
+
+**Difference Between HttpResponse and render()**
+- `HttpResponse`: This is the fundamental building block. You must manually perform every step: load the template file using `loader.get_template()`, render it with a context dictionary, and then pass the resulting HTML string into an `HttpResponse` object. It gives you full control but is verbose.
+- `render()`: This is a shortcut function that handles the entire process in one line. It takes the `request` object, the path to the template, and a context dictionary as arguments. Behind the scenes, it performs the same steps as the manual method (loading, rendering, and wrapping in `HttpResponse`) and returns the final object. It is the preferred, idiomatic way to render templates in Django.
+
+**URL and Template Decisions**
+I created two distinct URLs (`/trades/http/` and `/trades/render/`) to make it easy to test and verify each view independently. Both views intentionally use the exact same template (`trade_list.html`). This highlights that templates are decoupled from the view logic; they only need a context dictionary named `trades` to function correctly, regardless of how the view prepares it.

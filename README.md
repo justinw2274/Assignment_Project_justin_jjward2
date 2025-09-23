@@ -14,3 +14,8 @@ Key relationships include:
 *   A one-to-many relationship from `Strategy` to `Trade` (`on_delete=PROTECT`) to preserve trade history.
 
 ![ER Diagram](notes/er_diagram.png)
+
+
+## Views and Templates
+
+For this assignment, the full Django request-response cycle was implemented to display data from the models. Two separate function-based views were created to demonstrate different methods of rendering a template: one using a manual `HttpResponse` and another using the `render()` shortcut. Both views serve the same template, which dynamically displays a list of trades from the database and includes a fallback message for when no trades are present.
