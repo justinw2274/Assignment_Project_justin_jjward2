@@ -78,3 +78,38 @@ Choice: `venv`
 Reason: I chose `venv` because it is the standard, built-in virtual environment tool for Python 3. It requires no external installation, is lightweight, and integrates seamlessly with any workflow. It is the official recommendation from the Python community and is perfectly capable of managing all the dependencies for this Django project.
 
 
+#######################################
+# Week 4: Data Model and Admin Setup
+#######################################
+
+## Model & Field Rationale
+I designed three core models to represent the project's data structure:
+
+1.  **Strategy**: This is the parent model. Each user-defined strategy is a unique entity with a name and description. `name` is unique to prevent duplicate strategies.
+2.  **Rule**: This model defines the logic of a strategy. A strategy is composed of one or more rules.
+3.  **Trade**: This records the simulated trades executed by a strategy, creating a historical log of performance.
+
+## Relationship Choices
+*   **Rule -> Strategy (ForeignKey, `on_delete=models.CASCADE`)**: A rule is meaningless without its parent strategy. If a strategy is deleted, all of its defining rules should be deleted along with it. This maintains database integrity automatically.
+*   **Trade -> Strategy (ForeignKey, `on_delete=models.PROTECT`)**: It is critical to preserve the historical record of trades. `PROTECT` prevents the accidental deletion of a strategy if it has trades associated with it. This forces a deliberate action to delete the trades first, acting as a valuable safety feature.
+
+## Constraints and Ordering
+*   **UniqueConstraint (Rule model)**: I added a `UniqueConstraint` on the fields `['strategy', 'indicator', 'operator', 'value']`. This prevents a user from creating two identical rules within the same strategy (e.g., two "RSI > 70" rules), which would be redundant and illogical.
+*   **Ordering**: Strategies are ordered by `name` for easy browsing. Trades are ordered by `-trade_date` (descending) to show the most recent activity first, which is the most common use case.
+
+## Test Data Seeding
+I used the Django Admin interface to seed the test data.
+1.  Created two strategies: "Momentum Breakout" and "Mean Reversion".
+2.  Added rules to each, and verified the `UniqueConstraint` by attempting to add a duplicate rule, which failed as expected.
+3.  Added 7 trades and linked them to the strategies.
+4.  Verified the `on_delete=PROTECT` constraint by attempting to delete a strategy that had trades, which also failed as expected. This confirms the relationships and protections are working correctly.
+
+**Why Two Views?**
+The purpose of writing two separate views was to directly compare the manual, low-level process of returning an HTTP response with Django's high-level `render()` shortcut. This exercise demonstrates how `render()` abstracts away the steps of loading a template and packaging it into an `HttpResponse`, which reduces boilerplate code and improves readability.
+
+**Difference Between HttpResponse and render()**
+- `HttpResponse`: This is the fundamental building block. You must manually perform every step: load the template file using `loader.get_template()`, render it with a context dictionary, and then pass the resulting HTML string into an `HttpResponse` object. It gives you full control but is verbose.
+- `render()`: This is a shortcut function that handles the entire process in one line. It takes the `request` object, the path to the template, and a context dictionary as arguments. Behind the scenes, it performs the same steps as the manual method (loading, rendering, and wrapping in `HttpResponse`) and returns the final object. It is the preferred, idiomatic way to render templates in Django.
+
+**URL and Template Decisions**
+I created two distinct URLs (`/trades/http/` and `/trades/render/`) to make it easy to test and verify each view independently. Both views intentionally use the exact same template (`trade_list.html`). This highlights that templates are decoupled from the view logic; they only need a context dictionary named `trades` to function correctly, regardless of how the view prepares it.

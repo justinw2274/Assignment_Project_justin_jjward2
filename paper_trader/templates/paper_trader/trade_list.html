@@ -1,0 +1,17 @@
+{% extends "paper_trader/base.html" %}
+
+{% block title %}Trade History{% endblock %}
+
+{% block content %}
+    <h1>My Trades</h1>
+    
+    <ul>
+        {% for trade in trades %}
+            <li>
+                {{ trade.action }} {{ trade.quantity }} shares of {{ trade.symbol }} @ ${{ trade.price }}
+            </li>
+        {% empty %}
+            <li>No trades have been logged yet.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
