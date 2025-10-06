@@ -1,0 +1,15 @@
+{% extends "paper_trader/base.html" %}
+
+{% block title %}Strategies (Generic View){% endblock %}
+
+{% block content %}
+    <h1>All Strategies (from Generic View)</h1>
+    <ul>
+        {% for strategy in strategies %}
+            <li>{{ strategy.name }}</li>
+        {% empty %}
+            <li>No strategies have been created yet.</li>
+        {% endfor %}
+    </ul>
+    <p><a href="{% url 'paper_trader:strategy_list_base' %}">Switch to Base View</a></p>
+{% endblock %}

@@ -2,6 +2,9 @@ from django.http import HttpResponse
 from django.template import loader
 from django.shortcuts import render
 from .models import Trade
+from django.views import View
+from django.views.generic import ListView
+from .models import Strategy
 
 
 def trade_list_http(request):
@@ -28,3 +31,17 @@ def trade_list_render(request):
     }
 
     return render(request, "paper_trader/trade_list.html", context)
+
+
+class StrategyListBaseView(View):
+    def get(self, request):
+        strategies = Strategy.objects.all()
+        context = {
+            "strategies": strategies,
+        }
+        return render(request, "paper_trader/strategy_list_base.html", context)
+
+class StrategyListGenericView(ListView):
+    model = Strategy
+    template_name = "paper_trader/strategy_list_generic.html"
+    context_object_name = "strategies"

@@ -19,3 +19,6 @@ Key relationships include:
 ## Views and Templates
 
 For this assignment, the full Django request-response cycle was implemented to display data from the models. Two separate function-based views were created to demonstrate different methods of rendering a template: one using a manual `HttpResponse` and another using the `render()` shortcut. Both views serve the same template, which dynamically displays a list of trades from the database and includes a fallback message for when no trades are present.
+
+## Class-Based Views (CBVs) & URL Refactoring
+For this assignment, two styles of Class-Based Views (CBVs) were implemented: a base view inheriting from `django.views.View` and a generic view using `ListView`. This demonstrates the evolution from manual method handling to leveraging Django's powerful generic views. The project's URL structure was also refactored to use `include()`, making the app more modular and maintainable.

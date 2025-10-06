@@ -113,3 +113,17 @@ The purpose of writing two separate views was to directly compare the manual, lo
 
 **URL and Template Decisions**
 I created two distinct URLs (`/trades/http/` and `/trades/render/`) to make it easy to test and verify each view independently. Both views intentionally use the exact same template (`trade_list.html`). This highlights that templates are decoupled from the view logic; they only need a context dictionary named `trades` to function correctly, regardless of how the view prepares it.
+
+
+--- Assignment 5 Notes ---
+
+**Difference Between Base and Generic Class-Based Views:**
+A base CBV (inheriting from `View`) is the foundational class. It requires you to manually implement methods for each HTTP verb you want to handle (e.g., `def get(self, request):`, `def post(self, request):`). You are in full control but must write all the logic yourself.
+
+A generic CBV (like `ListView` or `DetailView`) inherits from the base `View` but comes with a great deal of pre-built functionality for common use cases. For a `ListView`, you simply specify the model, and it automatically handles querying the database for all objects, passing them to a template, and rendering the response.
+
+**Why Generic Views Reduce Boilerplate:**
+Generic views abstract away the most common patterns in web development. Instead of repeatedly writing "get all objects from this model and render them with this template," you can declare those intentions with a few class attributes (`model`, `template_name`). This makes the code shorter, faster to write, and less prone to simple errors.
+
+**Why URL Refactoring Improves Maintainability:**
+Refactoring the project's URL structure to use `include()` makes the project more organized and scalable. It decouples the project's URL configuration from the app's internal URLs. This means you can easily reuse the `paper_trader` app in another project, or change its root URL (e.g., move it from `/` to `/trading/`) by changing only one line in the main `urls.py` file, without having to modify any of the app's internal URL patterns.
