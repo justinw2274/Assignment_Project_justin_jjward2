@@ -127,3 +127,16 @@ Generic views abstract away the most common patterns in web development. Instead
 
 **Why URL Refactoring Improves Maintainability:**
 Refactoring the project's URL structure to use `include()` makes the project more organized and scalable. It decouples the project's URL configuration from the app's internal URLs. This means you can easily reuse the `paper_trader` app in another project, or change its root URL (e.g., move it from `/` to `/trading/`) by changing only one line in the main `urls.py` file, without having to modify any of the app's internal URL patterns.
+
+
+--- Assignment 6 Notes ---
+
+**Filtering vs. Aggregation**
+*   **Filtering:** Narrows down a set of data. It reduces the number of rows in a queryset based on a condition (e.g., showing only strategies where the name contains "Momentum"). It answers the question, "Which items match this criteria?"
+*   **Aggregation:** Computes a single summary value from a set of data (e.g., the total count of all strategies). It answers the question, "What is the total/average/sum of these items?"
+*   **Annotation:** A special type of aggregation that calculates a summary value for *each* item in a queryset, adding it as a new field to each object. For example, calculating the number of trades for each individual strategy.
+
+**Project Summary Statistics:**
+*   **Total Strategies:** A simple count of all `Strategy` objects in the database, providing a high-level overview of how many strategies have been created.
+*   **Rules per Strategy:** This breakdown shows how many `Rule` objects are linked to each `Strategy`. It helps identify which strategies are simple (e.g., 1 rule) versus which are more complex (e.g., 5+ rules).
+*   **Trades per Strategy:** This shows how many `Trade` objects are associated with each `Strategy`. It's a quick way to see which strategies have been most active in simulations.
