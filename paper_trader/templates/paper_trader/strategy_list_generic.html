@@ -5,18 +5,15 @@
 {% block content %}
     <h1>All Strategies</h1>
 
-    <!-- Search Form -->
     <form method="get" action="">
         <input type="text" name="q" placeholder="Search strategies..." value="{{ search_query }}">
         <button type="submit">Search</button>
     </form>
 
-    <!-- Display search results message -->
     {% if search_query %}
         <p><i>Showing {{ strategies.count }} results for "{{ search_query }}".</i> <a href="{% url 'paper_trader:strategy_list_generic' %}">Clear search</a></p>
     {% endif %}
 
-    <!-- List of Strategies (Filtered or Full) -->
     <ul>
         {% for strategy in strategies %}
             <li>{{ strategy.name }}</li>
@@ -27,33 +24,11 @@
 
     <hr>
 
-    <!-- Aggregations Block -->
+    <h2>Strategy Complexity</h2>
+    <p>This chart shows the number of rules defined for each strategy.</p>
+    <img src="{% url 'paper_trader:strategy_rules_chart' %}" alt="Bar chart showing the number of rules per strategy." style="max-width: 100%; height: auto;">
+
+    <hr>
+
     <h2>Summary Statistics</h2>
-
-    <h4>Totals</h4>
-    <p><strong>Total Strategies:</strong> {{ total_strategies }}</p>
-
-    <h4>Breakdowns</h4>
-    <div style="display: flex; gap: 2rem;">
-        <div>
-            <strong>Rules per Strategy:</strong>
-            <ul>
-                {% for strategy in rules_per_strategy %}
-                    <li>{{ strategy.name }}: {{ strategy.rule_count }} rules</li>
-                {% empty %}
-                    <li>No strategies to analyze.</li>
-                {% endfor %}
-            </ul>
-        </div>
-        <div>
-            <strong>Trades per Strategy:</strong>
-            <ul>
-                {% for strategy in trades_per_strategy %}
-                    <li>{{ strategy.name }}: {{ strategy.trade_count }} trades</li>
-                {% empty %}
-                    <li>No strategies to analyze.</li>
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
 {% endblock %}
