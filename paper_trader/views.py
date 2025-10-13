@@ -8,6 +8,7 @@ from .models import Strategy
 from django.db.models import Count
 
 
+
 def trade_list_http(request):
 
     all_trades = Trade.objects.all()
