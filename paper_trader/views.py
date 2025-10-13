@@ -5,6 +5,7 @@ from .models import Trade
 from django.views import View
 from django.views.generic import ListView
 from .models import Strategy
+from django.db.models import Count
 
 
 def trade_list_http(request):
@@ -41,7 +42,32 @@ class StrategyListBaseView(View):
         }
         return render(request, "paper_trader/strategy_list_base.html", context)
 
+
 class StrategyListGenericView(ListView):
     model = Strategy
     template_name = "paper_trader/strategy_list_generic.html"
     context_object_name = "strategies"
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        query = self.request.GET.get('q')
+        if query:
+            return queryset.filter(name__icontains=query)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['search_query'] = self.request.GET.get('q', '')
+
+        context['total_strategies'] = Strategy.objects.count()
+
+        context['rules_per_strategy'] = Strategy.objects.annotate(
+            rule_count=Count('rules')
+        ).order_by('-rule_count')
+
+        context['trades_per_strategy'] = Strategy.objects.annotate(
+            trade_count=Count('trades')
+        ).order_by('-trade_count')
+
+        return context

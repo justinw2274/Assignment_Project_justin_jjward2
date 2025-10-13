@@ -13,7 +13,7 @@ Key relationships include:
 *   A one-to-many relationship from `Strategy` to `Rule` (`on_delete=CASCADE`).
 *   A one-to-many relationship from `Strategy` to `Trade` (`on_delete=PROTECT`) to preserve trade history.
 
-![ER Diagram](notes/er_diagram.png)
+![ER Diagram](docs/notes/er_diagram.png)
 
 
 ## Views and Templates
@@ -22,3 +22,6 @@ For this assignment, the full Django request-response cycle was implemented to d
 
 ## Class-Based Views (CBVs) & URL Refactoring
 For this assignment, two styles of Class-Based Views (CBVs) were implemented: a base view inheriting from `django.views.View` and a generic view using `ListView`. This demonstrates the evolution from manual method handling to leveraging Django's powerful generic views. The project's URL structure was also refactored to use `include()`, making the app more modular and maintainable.
+
+## Filtering and Aggregation
+The Strategy list page now includes a search feature to filter strategies by name. The page also computes and displays summary statistics, such as the total number of strategies and grouped counts of rules and trades per strategy, using the Django ORM's `aggregate()` and `annotate()` functions.
