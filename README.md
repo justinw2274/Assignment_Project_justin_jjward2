@@ -25,3 +25,7 @@ For this assignment, two styles of Class-Based Views (CBVs) were implemented: a 
 
 ## Filtering and Aggregation
 The Strategy list page now includes a search feature to filter strategies by name. The page also computes and displays summary statistics, such as the total number of strategies and grouped counts of rules and trades per strategy, using the Django ORM's `aggregate()` and `annotate()` functions.
+
+## Static Assets & Charting
+1.  **Static File Configuration:** Django's static files system was configured to serve a custom, professionally designed CSS stylesheet, providing a modern and clean theme across the entire application.
+2.  **Dynamic Data Visualization:** A new view was created to dynamically generate a bar chart using the Matplotlib library. This chart is created in-memory from real-time database aggregations and served as a PNG image, which is then embedded directly into the Strategy Dashboard.
