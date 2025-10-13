@@ -1,13 +1,17 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}My Trading App{% endblock %}</title>
+    <title>{% block title %}Paper Trader{% endblock %}</title>
+    <!-- Link to the new stylesheet -->
+    <link rel="stylesheet" href="{% static 'paper_trader/css/style.css' %}">
 </head>
 <body>
-    <main>
-        {% block content %}
-        {% endblock %}
-    </main>
+
+    <div class="content-card">
+        {% block content %}{% endblock %}
+    </div>
+
 </body>
 </html>
