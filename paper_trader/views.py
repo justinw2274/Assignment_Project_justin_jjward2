@@ -6,7 +6,8 @@ from django.views import View
 from django.views.generic import ListView
 from .models import Strategy
 from django.db.models import Count
-
+import io
+import matplotlib.pyplot as plt
 
 
 def trade_list_http(request):
@@ -72,3 +73,26 @@ class StrategyListGenericView(ListView):
         ).order_by('-trade_count')
 
         return context
+
+def strategy_rules_chart(request):
+    strategy_data = Strategy.objects.annotate(
+        rule_count=Count('rules')
+    ).order_by('name')
+
+    strategy_names = [s.name for s in strategy_data]
+    rule_counts = [s.rule_count for s in strategy_data]
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.barh(strategy_names, rule_counts, color='#1976d2')
+
+    ax.set_xlabel('Number of Rules')
+    ax.set_ylabel('Strategy')
+    ax.set_title('Number of Rules per Strategy')
+    plt.tight_layout()
+
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    plt.close(fig)
+    buf.seek(0)
+
+    return HttpResponse(buf.getvalue(), content_type='image/png')
