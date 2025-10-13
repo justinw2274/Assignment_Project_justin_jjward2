@@ -140,3 +140,25 @@ Refactoring the project's URL structure to use `include()` makes the project mor
 *   **Total Strategies:** A simple count of all `Strategy` objects in the database, providing a high-level overview of how many strategies have been created.
 *   **Rules per Strategy:** This breakdown shows how many `Rule` objects are linked to each `Strategy`. It helps identify which strategies are simple (e.g., 1 rule) versus which are more complex (e.g., 5+ rules).
 *   **Trades per Strategy:** This shows how many `Trade` objects are associated with each `Strategy`. It's a quick way to see which strategies have been most active in simulations.
+
+
+--- Assignment 7 Notes ---
+
+**How Static Files Work in Django:**
+*   Static files (CSS, JavaScript, images) are assets that don't change. They are placed in a dedicated `static` directory, typically namespaced within each app (e.g., `app/static/app/`).
+*   To use them in a template, you must first include `{% load static %}` at the top.
+*   The `{% static 'path/to/file.css' %}` template tag generates the correct URL for the asset, ensuring it works in both development and production environments.
+
+**Dynamic Chart Generation with Matplotlib:**
+*   The chart is generated in a dedicated Django view, not as a static file.
+*   The view first performs a database query using the ORM's `.annotate()` and `Count()` functions to get the data (e.g., the number of rules for each strategy).
+*   Matplotlib is then used to create a chart (in this case, a horizontal bar chart) from that data.
+
+**Key Functions & Concepts:**
+*   **`matplotlib.use('Agg')`**: This is a crucial line for running Matplotlib in a web server environment. It switches Matplotlib to a non-interactive "backend" that renders charts to a buffer instead of trying to open a GUI window, which would crash the server (especially on macOS).
+*   **`io.BytesIO`**: This creates a binary file in memory. Instead of saving the chart image to the disk, Matplotlib saves it directly into this memory buffer.
+*   **`HttpResponse(buffer.getvalue(), content_type='image/png')`**: The view reads the binary content from the `BytesIO` buffer and returns it in an `HttpResponse`, telling the browser that it is receiving a PNG image.
+*   **`plt.tight_layout()`**: A helpful Matplotlib function that automatically adjusts the chart's padding and spacing to ensure all elements (like labels and titles) fit neatly without overlapping.
+
+**Chart Explanation:**
+*   The bar chart on the Strategy Dashboard provides a quick visual reference for the complexity of each strategy by displaying the number of rules associated with it.
