@@ -1,68 +1,68 @@
 {% extends "paper_trader/base.html" %}
 
-{% block title %}Strategies{% endblock %}
+{% block title %}Strategy Dashboard{% endblock %}
 
 {% block content %}
-  <h1>All Strategies</h1>
+    <h1>Strategy Dashboard</h1>
 
-  <form method="get" action="">
-    <input type="text" name="q" placeholder="Search strategies..." value="{{ search_query }}">
-    <button type="submit">Search</button>
-  </form>
+    <!-- Search and List Section -->
+    <form method="get" action="">
+        <input type="text" name="q" placeholder="Search strategies..." value="{{ search_query }}">
+        <button type="submit">Search</button>
+    </form>
 
-  {% if search_query %}
-    <p><i>Showing {{ strategies.count }} results for "{{ search_query }}".</i>
-      <a href="{% url 'paper_trader:strategy_list_generic' %}">Clear search</a>
-    </p>
-  {% endif %}
+    {% if search_query %}
+        <p style="margin-top: 1rem;">
+            <i>Showing {{ strategies.count }} results for "{{ search_query }}".</i>
+            <a href="{% url 'paper_trader:strategy_list_generic' %}">Clear search</a>
+        </p>
+    {% endif %}
 
-  <ul>
-    {% for strategy in strategies %}
-      <li>{{ strategy.name }}</li>
-    {% empty %}
-      <li>No strategies found.</li>
-    {% endfor %}
-  </ul>
-
-  <hr>
-
-  <h2>Strategy Complexity</h2>
-  <p>This chart shows the number of rules defined for each strategy.</p>
-  <img
-    src="{% url 'paper_trader:strategy_rules_chart' %}"
-    alt="Bar chart showing the number of rules per strategy."
-    style="max-width: 100%; height: auto;"
-  >
-
-  <hr>
-
-  <h2>Summary Statistics</h2>
-
-  <h4>Totals</h4>
-  <p><strong>Total strategies:</strong> {{ total_strategies }}</p>
-
-  <h4>Breakdowns</h4>
-  <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
-    <div>
-      <strong>Rules per strategy</strong>
-      <ul>
-        {% for s in rules_per_strategy %}
-          <li>{{ s.name }}: {{ s.rule_count }}</li>
+    <ul>
+        {% for strategy in strategies %}
+            <li>{{ strategy.name }}</li>
         {% empty %}
-          <li>No strategies to analyze.</li>
+            <li>No strategies found.</li>
         {% endfor %}
-      </ul>
+    </ul>
+
+    <hr>
+
+    <!-- Chart Section -->
+    <h2>Strategy Complexity</h2>
+    <div class="chart-container">
+        <p>This chart shows the number of rules defined for each strategy.</p>
+        <img src="{% url 'paper_trader:strategy_rules_chart' %}" alt="Bar chart showing the number of rules per strategy.">
     </div>
 
-    <div>
-      <strong>Trades per strategy</strong>
-      <ul>
-        {% for s in trades_per_strategy %}
-          <li>{{ s.name }}: {{ s.trade_count }}</li>
-        {% empty %}
-          <li>No strategies to analyze.</li>
-        {% endfor %}
-      </ul>
+    <hr>
+
+    <!-- Summary Statistics Section -->
+    <h2>Summary Statistics</h2>
+    <div class="summary-stats-grid">
+        <div class="summary-block">
+            <h4>Totals</h4>
+            <p><strong>Total Strategies:</strong> {{ total_strategies }}</p>
+        </div>
+        <div class="summary-block">
+            <h4>Rules per Strategy</h4>
+            <ul>
+                {% for s in rules_per_strategy %}
+                    <li>{{ s.name }}: {{ s.rule_count }} rules</li>
+                {% empty %}
+                    <li>No strategies to analyze.</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="summary-block">
+            <h4>Trades per Strategy</h4>
+            <ul>
+                {% for s in trades_per_strategy %}
+                    <li>{{ s.name }}: {{ s.trade_count }} trades</li>
+                {% empty %}
+                    <li>No strategies to analyze.</li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
-  </div>
 {% endblock %}
