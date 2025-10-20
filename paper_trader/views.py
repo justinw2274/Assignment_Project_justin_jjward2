@@ -12,6 +12,8 @@ from django.db.models import Count
 from .models import Trade, Strategy
 from django.urls import reverse
 from .forms import StrategyForm
+from django.views.generic.edit import CreateView
+from django.urls import reverse_lazy
 
 
 def trade_list_http(request):
@@ -98,3 +100,14 @@ def strategy_create_fbv(request):
         'form': form,
         'view_type': 'Function-Based View'
     })
+
+class StrategyCreateCBV(CreateView):
+    model = Strategy
+    form_class = StrategyForm
+    template_name = 'paper_trader/strategy_form_cbv.html'
+    success_url = reverse_lazy('paper_trader:strategy_list_generic')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['view_type'] = 'Class-Based View'
+        return context
