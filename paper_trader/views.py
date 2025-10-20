@@ -5,12 +5,13 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 from django.http import HttpResponse
 from django.template import loader
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView
 from django.db.models import Count
-
 from .models import Trade, Strategy
+from django.urls import reverse
+from .forms import StrategyForm
 
 
 def trade_list_http(request):
@@ -82,3 +83,18 @@ def strategy_rules_chart(request):
     plt.close(fig)
     buf.seek(0)
     return HttpResponse(buf.getvalue(), content_type="image/png")
+
+
+def strategy_create_fbv(request):
+    if request.method == 'POST':
+        form = StrategyForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('paper_trader:strategy_list_generic'))
+    else:
+        form = StrategyForm()
+
+    return render(request, 'paper_trader/strategy_form_fbv.html', {
+        'form': form,
+        'view_type': 'Function-Based View'
+    })
