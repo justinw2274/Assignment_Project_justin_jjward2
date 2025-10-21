@@ -162,3 +162,33 @@ Refactoring the project's URL structure to use `include()` makes the project mor
 
 **Chart Explanation:**
 *   The bar chart on the Strategy Dashboard provides a quick visual reference for the complexity of each strategy by displaying the number of rules associated with it.
+
+
+--- Assignment 8 Notes ---
+
+**Key Concepts in Django Forms:**
+
+*   **GET vs. POST Methods:**
+    *   **GET** is used for safe, idempotent requests like searching or filtering. Data is sent in the URL (`?q=...`), which is bookmarkable but insecure for sensitive information.
+    *   **POST** is used for requests that change server state, like creating or updating an object. Data is sent in the request body, which is more secure and can handle large amounts of data.
+
+*   **What CSRF Is and Why It's Needed:**
+    *   CSRF stands for Cross-Site Request Forgery. It's an attack where a malicious site tricks a user into performing an unwanted action on a site where they are authenticated.
+    *   The `{% csrf_token %}` tag adds a hidden, unique token to your POST forms. Django verifies this token on submission to ensure the request originated from your own site, thus preventing the attack.
+
+*   **Django's Form Submission Process:**
+    1.  A `GET` request is made to the URL, and the view renders the template with an empty form instance.
+    2.  The user fills out the form and submits it, making a `POST` request to the same URL.
+    3.  The view creates a form instance populated with the `request.POST` data.
+    4.  `form.is_valid()` is called, which runs all validation checks (including our custom `clean_name` method).
+    5.  If invalid, the view re-renders the template with the same form instance, which now contains error messages.
+    6.  If valid, the data is processed (e.g., `form.save()`), and the user is redirected to a success page.
+
+*   **Pros and Cons of FBV vs. CBV for Forms:**
+    *   **Function-Based Views (FBVs):**
+        *   *Pros:* Explicit, easy to read for simple logic, and offers complete control over the workflow.
+        *   *Cons:* Can lead to repetitive boilerplate code, especially for standard CRUD (Create, Read, Update, Delete) operations.
+    *   **Class-Based Views (CBVs):**
+        *   *Pros:* Highly reusable, follows the Don't Repeat Yourself (DRY) principle, and handles common patterns with very little code (e.g., `CreateView`).
+        *   *Cons:* Can be harder to understand and customize because much of the logic is inherited and implicit.
+

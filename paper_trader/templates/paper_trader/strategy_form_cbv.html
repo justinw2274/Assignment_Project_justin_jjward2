@@ -1,0 +1,17 @@
+{% extends "paper_trader/base.html" %}
+
+{% block title %}Create Strategy (CBV){% endblock %}
+
+{% block content %}
+    <h1>Create a New Strategy ({{ view_type }})</h1>
+    <p>This form also uses the POST method, but is handled by a generic CreateView.</p>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+        
+        {{ form.as_p }}
+
+        <button type="submit">Save Strategy</button>
+        <a href="{% url 'paper_trader:strategy_list_generic' %}" style="margin-left: 1rem;">Cancel</a>
+    </form>
+{% endblock %}

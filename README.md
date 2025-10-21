@@ -29,3 +29,9 @@ The Strategy list page now includes a search feature to filter strategies by nam
 ## Static Assets & Charting
 1.  **Static File Configuration:** Django's static files system was configured to serve a custom, professionally designed CSS stylesheet, providing a modern and clean theme across the entire application.
 2.  **Dynamic Data Visualization:** A new view was created to dynamically generate a bar chart using the Matplotlib library. This chart is created in-memory from real-time database aggregations and served as a PNG image, which is then embedded directly into the Strategy Dashboard.
+
+## Feature Overview: GET vs. POST and FBV vs. CBV
+
+This week's assignment focused on Django's form handling capabilities. The project now includes a `GET` form for searching strategies and `POST` forms for creating new ones, demonstrating the key differences between these methods. The search feature uses a `GET` request, making the query visible in the URL, which is suitable for idempotent actions like retrieving data. In contrast, the create feature uses a `POST` request to securely send data to the server to create a new strategy, which is the correct method for actions that modify data.
+
+To compare development styles, the create feature was implemented twice: once with a Function-Based View (FBV) and once with a Class-Based View (CBV). The FBV required explicit `if/else` logic to handle GET and POST requests, offering granular control. The CBV, using Django's generic `CreateView`, abstracted away this boilerplate, handling form validation and redirection automatically with much less code.

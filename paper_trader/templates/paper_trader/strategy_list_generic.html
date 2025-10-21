@@ -3,6 +3,12 @@
 {% block title %}Strategy Dashboard{% endblock %}
 
 {% block content %}
+
+    <div style="margin-bottom: 2rem;">
+        <a href="{% url 'paper_trader:strategy_create_fbv' %}"><button>New Strategy (FBV)</button></a>
+        <a href="{% url 'paper_trader:strategy_create_cbv' %}"><button>New Strategy (CBV)</button></a>
+    </div>
+
     <h1>Strategy Dashboard</h1>
 
     <!-- Search and List Section -->
