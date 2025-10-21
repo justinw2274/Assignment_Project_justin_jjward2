@@ -4,7 +4,7 @@ from .models import Strategy
 class StrategyForm(forms.ModelForm):
     class Meta:
         model = Strategy
-        fields = ['name', 'description', 'active']
+        fields = ['name', 'description']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
         }
