@@ -15,4 +15,8 @@ urlpatterns = [
     path('strategies/generic/', views.StrategyListGenericView.as_view(), name='strategy_list_generic'),
 
     path('charts/strategy_rules.png', views.strategy_rules_chart, name='strategy_rules_chart'),
+
+    path('strategies/new/fbv/', views.strategy_create_fbv, name='strategy_create_fbv'),
+
+    path('strategies/new/cbv/', views.StrategyCreateCBV.as_view(), name='strategy_create_cbv'),
 ]
