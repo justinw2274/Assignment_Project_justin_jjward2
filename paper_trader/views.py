@@ -163,3 +163,6 @@ def api_driven_chart_view(request):
     buf.seek(0)
 
     return HttpResponse(buf.getvalue(), content_type='image/png')
+
+def strategy_chart_page(request):
+    return render(request, 'paper_trader/chart_page.html')
