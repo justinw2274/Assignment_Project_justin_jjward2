@@ -140,3 +140,26 @@ def api_ping_json(request):
 
 def api_ping_text(request):
     return HttpResponse('status: ok, source: Plain Text', content_type='text/plain')
+
+
+def api_driven_chart_view(request):
+    api_url = request.build_absolute_uri(reverse('paper_trader:strategy_summary_api'))
+    with urllib.request.urlopen(api_url) as response:
+        api_data = json.load(response)
+
+    strategy_names = [item['name'] for item in api_data]
+    rule_counts = [item['rule_count'] for item in api_data]
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.barh(strategy_names, rule_counts, color='#004080')
+
+    ax.set_xlabel('Number of Rules')
+    ax.set_title('Strategy Complexity (Rules per Strategy)')
+    plt.tight_layout()
+
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    plt.close(fig)
+    buf.seek(0)
+
+    return HttpResponse(buf.getvalue(), content_type='image/png')
