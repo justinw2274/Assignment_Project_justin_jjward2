@@ -19,4 +19,16 @@ urlpatterns = [
     path('strategies/new/fbv/', views.strategy_create_fbv, name='strategy_create_fbv'),
 
     path('strategies/new/cbv/', views.StrategyCreateCBV.as_view(), name='strategy_create_cbv'),
+
+    path('api/strategies/', views.api_strategy_list, name='api_strategy_list'),
+
+    path('api/strategies/summary/', views.StrategySummaryApiView.as_view(), name='strategy_summary_api'),
+
+    path('api/ping/json/', views.api_ping_json, name='api_ping_json'),
+
+    path('api/ping/text/', views.api_ping_text, name='api_ping_text'),
+
+    path('charts/dashboard/', views.strategy_chart_page, name='strategy_chart_page'),
+
+    path('charts/api_driven_chart.png', views.api_driven_chart_view, name='api_driven_chart'),
 ]
