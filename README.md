@@ -35,3 +35,13 @@ The Strategy list page now includes a search feature to filter strategies by nam
 This week's assignment focused on Django's form handling capabilities. The project now includes a `GET` form for searching strategies and `POST` forms for creating new ones, demonstrating the key differences between these methods. The search feature uses a `GET` request, making the query visible in the URL, which is suitable for idempotent actions like retrieving data. In contrast, the create feature uses a `POST` request to securely send data to the server to create a new strategy, which is the correct method for actions that modify data.
 
 To compare development styles, the create feature was implemented twice: once with a Function-Based View (FBV) and once with a Class-Based View (CBV). The FBV required explicit `if/else` logic to handle GET and POST requests, offering granular control. The CBV, using Django's generic `CreateView`, abstracted away this boilerplate, handling form validation and redirection automatically with much less code.
+
+## JSON APIs and API-Driven Charts
+
+1.  **JSON API Endpoints:**
+    *   A function-based view at `/api/strategies/` returns a list of all strategies.
+    *   A class-based view at `/api/strategies/summary/` returns aggregated data (the number of rules per strategy).
+    *   These endpoints use Django's `JsonResponse` to correctly format the data and set the `Content-Type` header to `application/json`.
+
+2.  **API-Driven Chart:**
+    *   A new chart view was created that acts as a client to our own API. It fetches data from the `/api/strategies/summary/` endpoint, parses the JSON, and uses Matplotlib to generate a bar chart. This demonstrates a decoupled architecture where the data source is separate from the presentation layer.

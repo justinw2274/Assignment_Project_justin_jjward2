@@ -1,9 +1,12 @@
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import json
+import urllib.request
+import io
 
 from io import BytesIO
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from django.shortcuts import render, redirect
 from django.views import View
@@ -111,3 +114,55 @@ class StrategyCreateCBV(CreateView):
         context = super().get_context_data(**kwargs)
         context['view_type'] = 'Class-Based View'
         return context
+
+
+def api_strategy_list(request):
+    strategies = list(Strategy.objects.values('id', 'name', 'description'))
+    data = {
+        'count': len(strategies),
+        'results': strategies,
+    }
+    return JsonResponse(data)
+
+
+class StrategySummaryApiView(View):
+    def get(self, request, *args, **kwargs):
+        summary_data = list(Strategy.objects.annotate(
+            rule_count=Count('rules')
+        ).values('name', 'rule_count'))
+
+        return JsonResponse(summary_data, safe=False)
+
+
+def api_ping_json(request):
+    return JsonResponse({'status': 'ok', 'source': 'JSON'})
+
+
+def api_ping_text(request):
+    return HttpResponse('status: ok, source: Plain Text', content_type='text/plain')
+
+
+def api_driven_chart_view(request):
+    api_url = request.build_absolute_uri(reverse('paper_trader:strategy_summary_api'))
+    with urllib.request.urlopen(api_url) as response:
+        api_data = json.load(response)
+
+    strategy_names = [item['name'] for item in api_data]
+    rule_counts = [item['rule_count'] for item in api_data]
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.barh(strategy_names, rule_counts, color='#004080')
+
+    ax.set_xlabel('Number of Rules')
+    ax.set_title('Strategy Complexity (Rules per Strategy)')
+    plt.tight_layout()
+
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    plt.close(fig)
+    buf.seek(0)
+
+    return HttpResponse(buf.getvalue(), content_type='image/png')
+
+def strategy_chart_page(request):
+    return render(request, 'paper_trader/chart_page.html')

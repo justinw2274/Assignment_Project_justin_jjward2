@@ -1,0 +1,25 @@
+{% extends "paper_trader/base.html" %}
+
+{% block title %}Strategy Chart{% endblock %}
+
+{% block content %}
+    <h1>Strategy Analysis Chart</h1>
+    <p>This chart is generated server-side by fetching data from a local JSON API endpoint.</p>
+
+    <div class="chart-container">
+        <img 
+            src="{% url 'paper_trader:api_driven_chart' %}" 
+            alt="Bar chart showing the number of rules per strategy"
+        >
+    </div>
+
+    <hr>
+    <h3>Test Your API Endpoints:</h3>
+    <ul>
+        <li><a href="{% url 'paper_trader:api_strategy_list' %}" target="_blank">Strategy List API (JSON)</a></li>
+        <li><a href="{% url 'paper_trader:strategy_summary_api' %}" target="_blank">Strategy Summary API (JSON)</a></li>
+        <li><a href="{% url 'paper_trader:api_ping_json' %}" target="_blank">Ping API (JSON)</a></li>
+        <li><a href="{% url 'paper_trader:api_ping_text' %}" target="_blank">Ping API (Plain Text)</a></li>
+    </ul>
+
+{% endblock %}
