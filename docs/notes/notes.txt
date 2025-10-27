@@ -192,3 +192,23 @@ Refactoring the project's URL structure to use `include()` makes the project mor
         *   *Pros:* Highly reusable, follows the Don't Repeat Yourself (DRY) principle, and handles common patterns with very little code (e.g., `CreateView`).
         *   *Cons:* Can be harder to understand and customize because much of the logic is inherited and implicit.
 
+
+--- Assignment 9 Notes ---
+
+**What is a JSON API?**
+*   A JSON API is an interface that allows different applications to communicate with each other by sending and receiving data formatted as JSON (JavaScript Object Notation).
+*   It defines a set of URLs (endpoints) where a client can send a request (like GET or POST) to retrieve or manipulate data, and the server responds with structured JSON data, not HTML.
+
+**HttpResponse vs. JsonResponse:**
+*   **`HttpResponse`** is a general-purpose class that can return any type of content. You must manually set the `content_type` header (e.g., `text/plain`, `image/png`). It returns a raw string or byte string.
+*   **`JsonResponse`** is a specialized subclass of `HttpResponse`. It automatically handles serializing a Python dictionary into JSON format and sets the `Content-Type` header to `application/json`. This is the standard and correct way to return API data in Django.
+
+**Chart Data Flow:**
+1.  A user requests the HTML page for the chart (`/charts/dashboard/`).
+2.  The template for that page contains an `<img>` tag whose `src` attribute points to the chart-generating URL (`/charts/api_driven_chart.png`).
+3.  The browser then makes a second request to this chart URL.
+4.  The `api_driven_chart_view` receives this request, and it in turn makes an internal request to our own API (`/api/strategies/summary/`) using `urllib.request`.
+5.  The view parses the JSON data from the API response.
+6.  It uses this parsed data to generate a chart with Matplotlib.
+7.  The chart is saved to an in-memory buffer (`io.BytesIO`) and returned as an `HttpResponse` with a `content_type` of `image/png`.
+8.  The browser receives this image data and displays it inside the `<img>` tag.
