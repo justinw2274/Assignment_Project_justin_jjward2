@@ -1,9 +1,12 @@
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import json
+import urllib.request
+import io
 
 from io import BytesIO
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from django.shortcuts import render, redirect
 from django.views import View
@@ -111,3 +114,29 @@ class StrategyCreateCBV(CreateView):
         context = super().get_context_data(**kwargs)
         context['view_type'] = 'Class-Based View'
         return context
+
+
+def api_strategy_list(request):
+    strategies = list(Strategy.objects.values('id', 'name', 'description'))
+    data = {
+        'count': len(strategies),
+        'results': strategies,
+    }
+    return JsonResponse(data)
+
+
+class StrategySummaryApiView(View):
+    def get(self, request, *args, **kwargs):
+        summary_data = list(Strategy.objects.annotate(
+            rule_count=Count('rules')
+        ).values('name', 'rule_count'))
+
+        return JsonResponse(summary_data, safe=False)
+
+
+def api_ping_json(request):
+    return JsonResponse({'status': 'ok', 'source': 'JSON'})
+
+
+def api_ping_text(request):
+    return HttpResponse('status: ok, source: Plain Text', content_type='text/plain')
