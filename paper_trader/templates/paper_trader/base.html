@@ -4,14 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Paper Trader{% endblock %}</title>
-    <!-- Link to the new stylesheet -->
     <link rel="stylesheet" href="{% static 'paper_trader/css/style.css' %}">
 </head>
 <body>
 
-    <div class="content-card">
+    <main class="container">
         {% block content %}{% endblock %}
-    </div>
+    </main>
 
 </body>
 </html>
