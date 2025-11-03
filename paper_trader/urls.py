@@ -34,4 +34,6 @@ urlpatterns = [
     path('charts/dashboard/', views.strategy_chart_page, name='strategy_chart_page'),
 
     path('charts/api_driven_chart.png', views.api_driven_chart_view, name='api_driven_chart'),
+
+    path('external/crypto-prices/', views.CryptoPriceView.as_view(), name='crypto_prices'),
 ]
