@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import json
 import urllib.request
 import io
+import requests
 
 from io import BytesIO
 from django.http import HttpResponse, JsonResponse
@@ -166,3 +167,40 @@ def api_driven_chart_view(request):
 
 def strategy_chart_page(request):
     return render(request, 'paper_trader/chart_page.html')
+
+
+class CryptoPriceView(View):
+    API_URL = "https://api.coingecko.com/api/v3/simple/price"
+
+    def get(self, request, *args, **kwargs):
+        crypto_ids = request.GET.get('ids', 'bitcoin,ethereum,dogecoin')
+
+        params = {
+            'ids': crypto_ids,
+            'vs_currencies': 'usd',
+        }
+
+        try:
+            response = requests.get(self.API_URL, params=params, timeout=5)
+
+            response.raise_for_status()
+
+            data = response.json()
+
+            cleaned_data = [
+                {'coin': coin, 'price_usd': prices.get('usd', 'N/A')}
+                for coin, prices in data.items()
+            ]
+
+            return render(request, 'paper_trader/crypto_prices.html', {
+                'ok': True,
+                'data': cleaned_data,
+            })
+
+        except requests.exceptions.RequestException as e:
+            error_message = f"Error fetching data from CoinGecko API: {e}"
+
+            return render(request, 'paper_trader/crypto_prices.html', {
+                'ok': False,
+                'error': error_message,
+            })
