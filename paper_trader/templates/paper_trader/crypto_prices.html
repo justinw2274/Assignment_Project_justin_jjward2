@@ -1,0 +1,33 @@
+{% extends "paper_trader/base.html" %}
+
+{% block title %}Live Crypto Prices{% endblock %}
+
+{% block content %}
+    <h1>Live Cryptocurrency Prices</h1>
+    <p>Data fetched from the CoinGecko public API.</p>
+
+    {% if ok %}
+        <div class="card">
+            <h2>Current Prices (USD)</h2>
+            <ul class="strategy-list">
+                {% for item in data %}
+                    <li>
+                        <strong>{{ item.coin|capfirst }}:</strong> ${{ item.price_usd|floatformat:2 }}
+                    </li>
+                {% empty %}
+                    <li>No price data found for the requested cryptocurrencies.</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <p style="margin-top: 1rem;">
+            <em>Try adding other coin IDs to the URL, like: <code>?ids=solana,cardano</code></em>
+        </p>
+    {% else %}
+        <div class="card" style="border-left-color: #e53935;">
+            <h2>Error</h2>
+            <p>Could not fetch data from the external API.</p>
+            <p><strong>Details:</strong> {{ error }}</p>
+        </div>
+    {% endif %}
+
+{% endblock %}
