@@ -4,7 +4,23 @@
 
 {% block content %}
     <h1>Live Cryptocurrency Prices</h1>
-    <p>Data fetched from the CoinGecko public API.</p>
+    <p>Data fetched from the CoinGecko public API. Search for any cryptocurrency by its ID.</p>
+
+    <!-- Search Form -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <form method="get" action="">
+            <input
+                type="text"
+                name="ids"
+                placeholder="Enter comma-separated IDs (e.g., bitcoin,ethereum,solana)"
+                value="{{ search_query }}"
+            >
+            <button type="submit">Get Prices</button>
+        </form>
+        <p style="margin-top: 1rem; font-size: 0.9rem; color: #b2b5be;">
+            <strong>Popular IDs:</strong> bitcoin, ethereum, dogecoin, cardano, solana, polkadot, ripple, litecoin
+        </p>
+    </div>
 
     {% if ok %}
         <div class="card">
@@ -15,13 +31,10 @@
                         <strong>{{ item.coin|capfirst }}:</strong> ${{ item.price_usd|floatformat:2 }}
                     </li>
                 {% empty %}
-                    <li>No price data found for the requested cryptocurrencies.</li>
+                    <li>No price data found for the requested cryptocurrencies. Make sure the IDs are correct and comma-separated.</li>
                 {% endfor %}
             </ul>
         </div>
-        <p style="margin-top: 1rem;">
-            <em>Try adding other coin IDs to the URL, like: <code>?ids=solana,cardano</code></em>
-        </p>
     {% else %}
         <div class="card" style="border-left-color: #e53935;">
             <h2>Error</h2>

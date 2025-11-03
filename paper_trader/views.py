@@ -182,9 +182,7 @@ class CryptoPriceView(View):
 
         try:
             response = requests.get(self.API_URL, params=params, timeout=5)
-
             response.raise_for_status()
-
             data = response.json()
 
             cleaned_data = [
@@ -192,15 +190,19 @@ class CryptoPriceView(View):
                 for coin, prices in data.items()
             ]
 
-            return render(request, 'paper_trader/crypto_prices.html', {
+            context = {
                 'ok': True,
                 'data': cleaned_data,
-            })
+                'search_query': crypto_ids,
+            }
+            return render(request, 'paper_trader/crypto_prices.html', context)
 
         except requests.exceptions.RequestException as e:
             error_message = f"Error fetching data from CoinGecko API: {e}"
 
-            return render(request, 'paper_trader/crypto_prices.html', {
+            context = {
                 'ok': False,
                 'error': error_message,
-            })
+                'search_query': crypto_ids,
+            }
+            return render(request, 'paper_trader/crypto_prices.html', context)
