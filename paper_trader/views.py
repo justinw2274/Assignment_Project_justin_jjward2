@@ -206,3 +206,37 @@ class CryptoPriceView(View):
                 'search_query': crypto_ids,
             }
             return render(request, 'paper_trader/crypto_prices.html', context)
+
+
+class CryptoPriceAPIView(View):
+    API_URL = "https://api.coingecko.com/api/v3/simple/price"
+
+    def get(self, request, *args, **kwargs):
+        crypto_ids = request.GET.get('ids', 'bitcoin,ethereum,dogecoin')
+
+        params = {
+            'ids': crypto_ids,
+            'vs_currencies': 'usd',
+        }
+
+        try:
+            response = requests.get(self.API_URL, params=params, timeout=5)
+            response.raise_for_status()
+            data = response.json()
+
+            cleaned_data = [
+                {'coin': coin, 'price_usd': prices.get('usd', 'N/A')}
+                for coin, prices in data.items()
+            ]
+
+            return JsonResponse({
+                'ok': True,
+                'count': len(cleaned_data),
+                'results': cleaned_data
+            })
+
+        except requests.exceptions.RequestException as e:
+            return JsonResponse({
+                'ok': False,
+                'error': str(e)
+            }, status=502)
