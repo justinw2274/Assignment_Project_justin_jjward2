@@ -45,3 +45,18 @@ To compare development styles, the create feature was implemented twice: once wi
 
 2.  **API-Driven Chart:**
     *   A new chart view was created that acts as a client to our own API. It fetches data from the `/api/strategies/summary/` endpoint, parses the JSON, and uses Matplotlib to generate a bar chart. This demonstrates a decoupled architecture where the data source is separate from the presentation layer.
+
+
+## External API Integration
+
+This week, the project was extended to integrate live data from an external public API.
+
+**API Used: CoinGecko Cryptocurrency Prices**
+*   The CoinGecko API provides real-time cryptocurrency price data with no API key required.
+*   This is relevant to the paper trading platform as users can now view current crypto prices to inform their trading strategies.
+
+**Implementation:**
+*   A new view (`CryptoPriceView`) accepts a search query parameter (e.g., `?ids=bitcoin,ethereum`) and fetches data from the CoinGecko API using Python's `requests` library.
+*   The view includes proper error handling for timeouts, network issues, and invalid responses using `try/except` blocks and `.raise_for_status()`.
+*   A search form was added to the page so users can easily query any cryptocurrency by ID without manually editing the URL.
+*   The response data is parsed and trimmed to show only the coin name and current USD price, making it clean and easy to read.

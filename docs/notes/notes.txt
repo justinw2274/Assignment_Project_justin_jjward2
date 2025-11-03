@@ -212,3 +212,37 @@ Refactoring the project's URL structure to use `include()` makes the project mor
 6.  It uses this parsed data to generate a chart with Matplotlib.
 7.  The chart is saved to an in-memory buffer (`io.BytesIO`) and returned as an `HttpResponse` with a `content_type` of `image/png`.
 8.  The browser receives this image data and displays it inside the `<img>` tag.
+
+
+
+--- Assignment 10 Notes ---
+
+**API Selection:**
+*   I chose the CoinGecko API because it provides free, real-time cryptocurrency price data with no API key required.
+*   This is directly relevant to my paper trading platform, as users can view current prices to help make informed trading decisions.
+*   Endpoint used: `https://api.coingecko.com/api/v3/simple/price`
+
+**Fields Extracted:**
+*   From the full API response, I extracted only two key fields to keep the output clean:
+    *   `coin`: The cryptocurrency ID (e.g., "bitcoin", "ethereum").
+    *   `price_usd`: The current price in US dollars.
+
+**Error Handling:**
+*   Used a `try/except` block to catch `requests.exceptions.RequestException`, which covers network errors, connection timeouts, and more.
+*   Set a 5-second timeout on the API call to prevent the page from hanging indefinitely if the external service is slow or unresponsive.
+*   Called `.raise_for_status()` to automatically raise an exception for any HTTP error response (4xx or 5xx status codes).
+*   If an error occurs, the view renders the template with an error message instead of crashing.
+
+**Final Data Structure:**
+*   The trimmed data passed to the template is a list of dictionaries, which is simple and easy to loop through:
+    ```
+    [
+        {"coin": "bitcoin", "price_usd": 34567.89},
+        {"coin": "ethereum", "price_usd": 1823.45}
+    ]
+    ```
+
+**API Limitations and Quirks:**
+*   The CoinGecko free API has rate limits (approximately 10-50 calls per minute), but this is more than sufficient for a demo project.
+*   Coin IDs must be exact matches (e.g., "bitcoin" works, but "Bitcoin" or "BTC" do not). The API documentation provides a full list of valid IDs.
+*   If an invalid coin ID is provided, the API simply returns an empty result for that ID rather than throwing an error, which is why clear messaging in the template is important.
