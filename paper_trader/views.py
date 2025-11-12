@@ -171,15 +171,12 @@ def strategy_chart_page(request):
 
 class CryptoPriceView(View):
     API_URL = "https://api.coingecko.com/api/v3/simple/price"
-
     def get(self, request, *args, **kwargs):
         crypto_ids = request.GET.get('ids', 'bitcoin,ethereum,dogecoin')
-
         params = {
             'ids': crypto_ids,
             'vs_currencies': 'usd',
         }
-
         try:
             response = requests.get(self.API_URL, params=params, timeout=5)
             response.raise_for_status()
@@ -189,17 +186,14 @@ class CryptoPriceView(View):
                 {'coin': coin, 'price_usd': prices.get('usd', 'N/A')}
                 for coin, prices in data.items()
             ]
-
             context = {
                 'ok': True,
                 'data': cleaned_data,
                 'search_query': crypto_ids,
             }
             return render(request, 'paper_trader/crypto_prices.html', context)
-
         except requests.exceptions.RequestException as e:
             error_message = f"Error fetching data from CoinGecko API: {e}"
-
             context = {
                 'ok': False,
                 'error': error_message,
