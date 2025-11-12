@@ -1,0 +1,20 @@
+--- Assignment 11: Authentication Notes ---
+
+- **What Authentication Protects:** Authentication protects all internal data, features, and intellectual property of the application. In this project, it prevents unauthorized users from viewing, creating, or exporting trading strategies, ensuring that all data is private to registered users.
+
+- **`LoginRequiredMixin` vs. `@login_required`:**
+  - `@login_required` is a decorator used to protect function-based views (FBVs).
+  - `LoginRequiredMixin` is a class mixin used to protect class-based views (CBVs). It must be the first class inherited.
+  - Both achieve the same goal: they check if `request.user.is_authenticated` is true. If not, they redirect the user to the login page.
+
+- **Purpose of the `next` Query Parameter:**
+  - When a logged-out user tries to access a protected page (e.g., `/reports/`), Django automatically redirects them to `/accounts/login/?next=/reports/`.
+  - The `?next=/reports/` parameter tells the login view where the user was originally trying to go. After a successful login, the view uses this parameter to redirect the user back to their intended page, creating a seamless user experience.
+
+- **Auth-Related Settings:**
+  - `LOGIN_URL = 'login'`: Tells Django that the name of our login URL pattern is 'login'.
+  - `LOGIN_REDIRECT_URL = 'paper_trader:strategy_list_generic'`: Specifies the default page to redirect to after a successful login if no `next` parameter is present.
+  - `LOGOUT_REDIRECT_URL = 'login'`: Specifies the page to redirect to after a user logs out.
+
+- **Ensuring New Users are Non-Staff:**
+  - In the `signup` view, after creating the user object from the form, I explicitly set `user.is_staff = False` and `user.is_superuser = False` before saving the user to the database. This ensures that even if the form were somehow manipulated, a new user can never be created with admin privileges.

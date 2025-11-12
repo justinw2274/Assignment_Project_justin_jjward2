@@ -60,3 +60,35 @@ This week, the project was extended to integrate live data from an external publ
 *   The view includes proper error handling for timeouts, network issues, and invalid responses using `try/except` blocks and `.raise_for_status()`.
 *   A search form was added to the page so users can easily query any cryptocurrency by ID without manually editing the URL.
 *   The response data is parsed and trimmed to show only the coin name and current USD price, making it clean and easy to read.
+
+
+## Exports, Reports, and Authentication
+
+### Part 1: Reports and Data Exports
+
+A new reports page and data export functionality have been added to allow users to analyze and download their strategy data.
+
+*   **Reports Page:** A new page at `/reports/` displays two summary tables: the number of rules per strategy and the total trade value per strategy. It also shows a summary of the total number of strategies.
+*   **CSV and JSON Exports:** From the reports page, users can download a complete export of all strategies in either CSV or JSON format. These files are timestamped and generated dynamically.
+*   **URLs:**
+    *   Reports Page: `/reports/`
+    *   CSV Export: `/export/csv/`
+    *   JSON Export: `/export/json/`
+
+### Part 2: Authentication and Access Control
+
+The entire application is now protected and requires users to be logged in to access any data, reports, or features.
+
+*   **Instructor Test Account:**
+    *   **Username:** `mohitg2`
+    *   **Password:** `graingerlibrary`
+
+*   **Protected Routes:** All views and endpoints are now protected using `@login_required` or the `LoginRequiredMixin`. This includes the strategies list, reports page, all internal APIs, chart endpoints, and the CSV/JSON exports. If a logged-out user attempts to access any of these pages, they are redirected to the login page.
+*   **Public Routes:** The only public pages are `/accounts/login/`, `/accounts/logout/`, and `/accounts/signup/`. This is necessary to allow users to authenticate and create accounts.
+*   **Login/Logout Flow:**
+    *   The post-login destination is the main strategies dashboard (`/strategies/generic/`).
+    *   The post-logout destination is the login page (`/accounts/login/`).
+    *   The navigation bar is dynamic, showing "Log In" and "Sign Up" to logged-out users, and "Log Out" with the user's name to logged-in users.
+*   **Signup Flow:**
+    *   A public signup page at `/accounts/signup/` allows new users to create an account by providing a username, email, and password.
+    *   The signup form uses Django's `UserCreationForm` to securely handle password creation. Upon successful registration, the new user is automatically logged in and redirected to the main dashboard. New users are created as non-staff and non-superuser by default, ensuring they cannot access the `/admin/` panel.
