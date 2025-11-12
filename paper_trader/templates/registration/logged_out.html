@@ -1,0 +1,11 @@
+{% extends "paper_trader/base.html" %}
+
+{% block title %}Logged Out{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 500px; margin: 2rem auto; text-align: center;">
+    <h2>You have been successfully logged out.</h2>
+    <p>Thank you for using the Paper Trader platform.</p>
+    <a href="{% url 'login' %}" class="btn" style="margin-top: 1rem;">Log In Again</a>
+</div>
+{% endblock %}
