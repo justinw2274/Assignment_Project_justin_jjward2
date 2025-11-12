@@ -7,10 +7,30 @@
     <link rel="stylesheet" href="{% static 'paper_trader/css/style.css' %}">
 </head>
 <body>
+    <header style="background-color: var(--bg-dark-tertiary); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;">
+        <a href="{% url 'paper_trader:strategy_list_generic' %}" style="font-size: 1.5rem; font-weight: bold; color: white;">Paper Trader</a>
+        <nav>
+            {% if user.is_authenticated %}
+                <span style="color: var(--text-secondary); margin-right: 1rem;">Hello, {{ user.username }}</span>
+                <a href="{% url 'logout' %}" class="btn">Log Out</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn">Log In</a>
+                <a href="{% url 'signup' %}" class="btn">Sign Up</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    {% if user.is_authenticated %}
+    <nav style="background: var(--bg-dark-secondary); padding: 0.5rem 2rem;">
+        <a href="{% url 'paper_trader:strategy_list_generic' %}">Strategies</a> |
+        <a href="{% url 'paper_trader:strategy_chart_page' %}">Charts</a> |
+        <a href="{% url 'paper_trader:crypto_prices' %}">Live Prices</a> |
+        <a href="{% url 'reports' %}">Reports</a>
+    </nav>
+    {% endif %}
 
     <main class="container">
         {% block content %}{% endblock %}
     </main>
-
 </body>
 </html>
