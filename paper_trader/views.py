@@ -136,10 +136,7 @@ def api_strategy_list(request):
 
 class StrategySummaryApiView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        summary_data = list(Strategy.objects.annotate(
-            rule_count=Count('rules')
-        ).values('name', 'rule_count'))
-
+        summary_data = get_strategy_summary_data()
         return JsonResponse(summary_data, safe=False)
 
 
@@ -155,16 +152,14 @@ def api_ping_text(request):
 
 @login_required
 def api_driven_chart_view(request):
-    api_url = request.build_absolute_uri(reverse('paper_trader:strategy_summary_api'))
-    with urllib.request.urlopen(api_url) as response:
-        api_data = json.load(response)
+    api_data = get_strategy_summary_data()
 
+    # The rest of the view remains the same
     strategy_names = [item['name'] for item in api_data]
     rule_counts = [item['rule_count'] for item in api_data]
 
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.barh(strategy_names, rule_counts, color='#004080')
-
     ax.set_xlabel('Number of Rules')
     ax.set_title('Strategy Complexity (Rules per Strategy)')
     plt.tight_layout()
@@ -313,3 +308,10 @@ def export_strategies_json(request):
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
     return response
+
+
+def get_strategy_summary_data():
+    summary_data = list(Strategy.objects.annotate(
+        rule_count=Count('rules')
+    ).values('name', 'rule_count'))
+    return summary_data
