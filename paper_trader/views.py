@@ -18,6 +18,8 @@ from django.urls import reverse
 from .forms import StrategyForm
 from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
+from django.contrib.auth import login
+from .forms import SignUpForm
 
 
 def trade_list_http(request):
@@ -234,3 +236,19 @@ class CryptoPriceAPIView(View):
                 'ok': False,
                 'error': str(e)
             }, status=502)
+
+
+
+def signup(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.is_staff = False
+            user.is_superuser = False
+            user.save()
+            login(request, user)
+            return redirect('paper_trader:strategy_list_generic')
+    else:
+        form = SignUpForm()
+    return render(request, 'registration/signup.html', {'form': form})
