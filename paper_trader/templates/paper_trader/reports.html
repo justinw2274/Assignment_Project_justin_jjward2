@@ -8,8 +8,9 @@
 
     <div class="card" style="margin-bottom: 2rem;">
         <h3>Download Data</h3>
-        <a href="{% url 'export_csv' %}" class="btn">Download Strategies as CSV</a>
-        <a href="{% url 'export_json' %}" class="btn">Download Strategies as JSON</a>
+        <!-- Add the namespace to these two URLs -->
+        <a href="{% url 'paper_trader:export_csv' %}" class="btn">Download Strategies as CSV</a>
+        <a href="{% url 'paper_trader:export_json' %}" class="btn">Download Strategies as JSON</a>
     </div>
 
     <div class="card" style="margin-bottom: 2rem;">
