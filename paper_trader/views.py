@@ -5,6 +5,7 @@ import json
 import urllib.request
 import io
 import requests
+import csv
 
 from io import BytesIO
 from django.http import HttpResponse, JsonResponse
@@ -12,12 +13,17 @@ from django.template import loader
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView
-from django.db.models import Count
+from django.db.models import Count, Sum
 from .models import Trade, Strategy
 from django.urls import reverse
 from .forms import StrategyForm
 from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
+from django.contrib.auth import login
+from .forms import SignUpForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils import timezone
 
 
 def trade_list_http(request):
@@ -41,7 +47,7 @@ class StrategyListBaseView(View):
         return render(request, "paper_trader/strategy_list_base.html", context)
 
 
-class StrategyListGenericView(ListView):
+class StrategyListGenericView(LoginRequiredMixin, ListView):
     model = Strategy
     template_name = "paper_trader/strategy_list_generic.html"
     context_object_name = "strategies"
@@ -91,6 +97,7 @@ def strategy_rules_chart(request):
     return HttpResponse(buf.getvalue(), content_type="image/png")
 
 
+@login_required
 def strategy_create_fbv(request):
     if request.method == 'POST':
         form = StrategyForm(request.POST)
@@ -105,7 +112,7 @@ def strategy_create_fbv(request):
         'view_type': 'Function-Based View'
     })
 
-class StrategyCreateCBV(CreateView):
+class StrategyCreateCBV(LoginRequiredMixin, CreateView):
     model = Strategy
     form_class = StrategyForm
     template_name = 'paper_trader/strategy_form_cbv.html'
@@ -117,6 +124,7 @@ class StrategyCreateCBV(CreateView):
         return context
 
 
+@login_required
 def api_strategy_list(request):
     strategies = list(Strategy.objects.values('id', 'name', 'description'))
     data = {
@@ -126,34 +134,32 @@ def api_strategy_list(request):
     return JsonResponse(data)
 
 
-class StrategySummaryApiView(View):
+class StrategySummaryApiView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        summary_data = list(Strategy.objects.annotate(
-            rule_count=Count('rules')
-        ).values('name', 'rule_count'))
-
+        summary_data = get_strategy_summary_data()
         return JsonResponse(summary_data, safe=False)
 
 
+@login_required
 def api_ping_json(request):
     return JsonResponse({'status': 'ok', 'source': 'JSON'})
 
 
+@login_required
 def api_ping_text(request):
     return HttpResponse('status: ok, source: Plain Text', content_type='text/plain')
 
 
+@login_required
 def api_driven_chart_view(request):
-    api_url = request.build_absolute_uri(reverse('paper_trader:strategy_summary_api'))
-    with urllib.request.urlopen(api_url) as response:
-        api_data = json.load(response)
+    api_data = get_strategy_summary_data()
 
+    # The rest of the view remains the same
     strategy_names = [item['name'] for item in api_data]
     rule_counts = [item['rule_count'] for item in api_data]
 
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.barh(strategy_names, rule_counts, color='#004080')
-
     ax.set_xlabel('Number of Rules')
     ax.set_title('Strategy Complexity (Rules per Strategy)')
     plt.tight_layout()
@@ -165,11 +171,12 @@ def api_driven_chart_view(request):
 
     return HttpResponse(buf.getvalue(), content_type='image/png')
 
+@login_required
 def strategy_chart_page(request):
     return render(request, 'paper_trader/chart_page.html')
 
 
-class CryptoPriceView(View):
+class CryptoPriceView(LoginRequiredMixin, View):
     API_URL = "https://api.coingecko.com/api/v3/simple/price"
     def get(self, request, *args, **kwargs):
         crypto_ids = request.GET.get('ids', 'bitcoin,ethereum,dogecoin')
@@ -202,7 +209,7 @@ class CryptoPriceView(View):
             return render(request, 'paper_trader/crypto_prices.html', context)
 
 
-class CryptoPriceAPIView(View):
+class CryptoPriceAPIView(LoginRequiredMixin, View):
     API_URL = "https://api.coingecko.com/api/v3/simple/price"
 
     def get(self, request, *args, **kwargs):
@@ -234,3 +241,77 @@ class CryptoPriceAPIView(View):
                 'ok': False,
                 'error': str(e)
             }, status=502)
+
+
+
+def signup(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.is_staff = False
+            user.is_superuser = False
+            user.save()
+            login(request, user)
+            return redirect('paper_trader:strategy_list_generic')
+    else:
+        form = SignUpForm()
+    return render(request, 'registration/signup.html', {'form': form})
+
+
+@login_required
+def reports_view(request):
+    rules_per_strategy = Strategy.objects.annotate(rule_count=Count('rules')).order_by('-rule_count')
+
+    trades_value_per_strategy = Strategy.objects.annotate(
+        total_value=Sum('trades__quantity')
+    ).order_by('-total_value')
+
+    total_strategies = Strategy.objects.count()
+
+    context = {
+        'rules_per_strategy': rules_per_strategy,
+        'trades_value_per_strategy': trades_value_per_strategy,
+        'total_strategies': total_strategies,
+    }
+    return render(request, 'paper_trader/reports.html', context)
+
+
+@login_required
+def export_strategies_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    filename = f"strategies_{timezone.now().strftime('%Y-%m-%d_%H-%M')}.csv"
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+    writer = csv.writer(response)
+    writer.writerow(['ID', 'Name', 'Description'])
+
+    strategies = Strategy.objects.all().values_list('id', 'name', 'description')
+    for strategy in strategies:
+        writer.writerow(strategy)
+
+    return response
+
+
+@login_required
+def export_strategies_json(request):
+    strategies = list(Strategy.objects.values('id', 'name', 'description'))
+
+    data = {
+        "generated_at": timezone.now().isoformat(),
+        "record_count": len(strategies),
+        "strategies": strategies,
+    }
+
+    response = JsonResponse(data, json_dumps_params={'indent': 2})
+    filename = f"strategies_{timezone.now().strftime('%Y-%m-%d_%H-%M')}.json"
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+    return response
+
+
+def get_strategy_summary_data():
+    summary_data = list(Strategy.objects.annotate(
+        rule_count=Count('rules')
+    ).values('name', 'rule_count'))
+    return summary_data

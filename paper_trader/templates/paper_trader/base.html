@@ -8,6 +8,34 @@
 </head>
 <body>
 
+    <header style="background-color: var(--bg-dark-tertiary); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;">
+        <a href="{% url 'paper_trader:strategy_list_generic' %}" style="font-size: 1.5rem; font-weight: bold; color: white; text-decoration: none;">
+            Paper Trader
+        </a>
+        <nav>
+            {% if user.is_authenticated %}
+                <span style="color: var(--text-secondary); margin-right: 1rem;">Hello, {{ user.username }}</span>
+                <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn">Log Out</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn">Log In</a>
+                <a href="{% url 'signup' %}" class="btn">Sign Up</a>
+
+            {% endif %}
+        </nav>
+    </header>
+
+    {% if user.is_authenticated %}
+    <nav style="background: var(--bg-dark-secondary); padding: 0.75rem 2rem; border-bottom: 1px solid var(--border-color);">
+        <a href="{% url 'paper_trader:strategy_list_generic' %}">Dashboard</a> &nbsp;|&nbsp;
+        <a href="{% url 'paper_trader:reports' %}">Reports & Exports</a> &nbsp;|&nbsp;
+        <a href="{% url 'paper_trader:strategy_chart_page' %}">Analysis Charts</a> &nbsp;|&nbsp;
+        <a href="{% url 'paper_trader:crypto_prices' %}">Live Crypto Prices</a>
+    </nav>
+    {% endif %}
+
     <main class="container">
         {% block content %}{% endblock %}
     </main>

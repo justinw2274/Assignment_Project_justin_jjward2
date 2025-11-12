@@ -246,3 +246,24 @@ Refactoring the project's URL structure to use `include()` makes the project mor
 *   The CoinGecko free API has rate limits (approximately 10-50 calls per minute), but this is more than sufficient for a demo project.
 *   Coin IDs must be exact matches (e.g., "bitcoin" works, but "Bitcoin" or "BTC" do not). The API documentation provides a full list of valid IDs.
 *   If an invalid coin ID is provided, the API simply returns an empty result for that ID rather than throwing an error, which is why clear messaging in the template is important.
+
+
+
+--- Assignment 11: Exports and Reports ---
+
+- **How CSV and JSON are Generated:**
+  - The export views use Django's `HttpResponse` and `JsonResponse` respectively.
+  - For CSV, Python's built-in `csv` library is used to write headers and row data directly to the response object.
+  - For JSON, a Python dictionary containing the data is passed to `JsonResponse`, which handles the serialization. `json_dumps_params={'indent': 2}` is used for pretty-printing.
+  - The `Content-Disposition` header is set in both views to tell the browser to treat the response as a downloadable file and to provide a timestamped filename.
+
+- **Metadata and Columns:**
+  - The **CSV export** includes the columns: `ID`, `Name`, and `Description`.
+  - The **JSON export** is a dictionary containing `generated_at` (an ISO timestamp), `record_count`, and a list of `strategies`, where each strategy is a dictionary with its `id`, `name`, and `description`.
+
+- **Report Summaries:**
+  - The reports page displays two main grouped summaries in tables:
+    1.  **Rules per Strategy:** Shows each strategy and a count of how many rules are associated with it.
+    2.  **Trade Value per Strategy:** Shows each strategy and the sum of its associated trade quantities.
+  - It also includes a line for the "Total Active Strategies."
+  - The `{% empty %}` template tag is used in each table to show a user-friendly message if there is no data to display.
