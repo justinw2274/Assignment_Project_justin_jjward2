@@ -5,6 +5,7 @@ import json
 import urllib.request
 import io
 import requests
+import csv
 
 from io import BytesIO
 from django.http import HttpResponse, JsonResponse
@@ -22,6 +23,7 @@ from django.contrib.auth import login
 from .forms import SignUpForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils import timezone
 
 
 def trade_list_http(request):
@@ -278,3 +280,36 @@ def reports_view(request):
         'total_strategies': total_strategies,
     }
     return render(request, 'paper_trader/reports.html', context)
+
+
+@login_required
+def export_strategies_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    filename = f"strategies_{timezone.now().strftime('%Y-%m-%d_%H-%M')}.csv"
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+    writer = csv.writer(response)
+    writer.writerow(['ID', 'Name', 'Description'])
+
+    strategies = Strategy.objects.all().values_list('id', 'name', 'description')
+    for strategy in strategies:
+        writer.writerow(strategy)
+
+    return response
+
+
+@login_required
+def export_strategies_json(request):
+    strategies = list(Strategy.objects.values('id', 'name', 'description'))
+
+    data = {
+        "generated_at": timezone.now().isoformat(),
+        "record_count": len(strategies),
+        "strategies": strategies,
+    }
+
+    response = JsonResponse(data, json_dumps_params={'indent': 2})
+    filename = f"strategies_{timezone.now().strftime('%Y-%m-%d_%H-%M')}.json"
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+    return response
