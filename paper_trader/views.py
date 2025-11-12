@@ -12,7 +12,7 @@ from django.template import loader
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView
-from django.db.models import Count
+from django.db.models import Count, Sum
 from .models import Trade, Strategy
 from django.urls import reverse
 from .forms import StrategyForm
@@ -260,3 +260,21 @@ def signup(request):
     else:
         form = SignUpForm()
     return render(request, 'registration/signup.html', {'form': form})
+
+
+@login_required
+def reports_view(request):
+    rules_per_strategy = Strategy.objects.annotate(rule_count=Count('rules')).order_by('-rule_count')
+
+    trades_value_per_strategy = Strategy.objects.annotate(
+        total_value=Sum('trades__quantity')
+    ).order_by('-total_value')
+
+    total_strategies = Strategy.objects.count()
+
+    context = {
+        'rules_per_strategy': rules_per_strategy,
+        'trades_value_per_strategy': trades_value_per_strategy,
+        'total_strategies': total_strategies,
+    }
+    return render(request, 'paper_trader/reports.html', context)
