@@ -38,4 +38,12 @@ urlpatterns = [
     path('external/crypto-prices/', views.CryptoPriceView.as_view(), name='crypto_prices'),
 
     path('api/external/crypto-prices/', views.CryptoPriceAPIView.as_view(), name='crypto_prices_api'),
+
+    path('signup/', views.signup, name='signup'),
+
+    path('reports/', views.reports_view, name='reports'),
+
+    path('export/csv/', views.export_strategies_csv, name='export_csv'),
+
+    path('export/json/', views.export_strategies_json, name='export_json'),
 ]
