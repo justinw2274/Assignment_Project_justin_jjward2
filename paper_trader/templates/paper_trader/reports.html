@@ -1,0 +1,64 @@
+{% extends "paper_trader/base.html" %}
+
+{% block title %}Reports{% endblock %}
+
+{% block content %}
+    <h1>Reports Dashboard</h1>
+    <p>Summary data and exports for your strategies.</p>
+
+    <div class="card" style="margin-bottom: 2rem;">
+        <h3>Download Data</h3>
+        <a href="{% url 'export_csv' %}" class="btn">Download Strategies as CSV</a>
+        <a href="{% url 'export_json' %}" class="btn">Download Strategies as JSON</a>
+    </div>
+
+    <div class="card" style="margin-bottom: 2rem;">
+        <h3>Summary Totals</h3>
+        <p><strong>Total Active Strategies:</strong> {{ total_strategies }}</p>
+    </div>
+
+    <div class="summary-grid">
+        <div class="card">
+            <h4>Rules per Strategy</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Strategy</th>
+                        <th>Rule Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in rules_per_strategy %}
+                    <tr>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.rule_count }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="2">No strategies found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="card">
+            <h4>Trade Value per Strategy</h4>
+             <table>
+                <thead>
+                    <tr>
+                        <th>Strategy</th>
+                        <th>Total Trade Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in trades_value_per_strategy %}
+                    <tr>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.total_value|default:"0" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="2">No trade data found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
