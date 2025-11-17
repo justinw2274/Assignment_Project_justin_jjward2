@@ -92,3 +92,27 @@ The entire application is now protected and requires users to be logged in to ac
 *   **Signup Flow:**
     *   A public signup page at `/accounts/signup/` allows new users to create an account by providing a username, email, and password.
     *   The signup form uses Django's `UserCreationForm` to securely handle password creation. Upon successful registration, the new user is automatically logged in and redirected to the main dashboard. New users are created as non-staff and non-superuser by default, ensuring they cannot access the `/admin/` panel.
+
+
+## Deployment to PythonAnywhere
+
+This project has been configured for deployment and is now live on PythonAnywhere.
+
+*   **Live URL:** `http://jjward2.pythonanywhere.com/`
+
+### Deployment Architecture
+
+*   **Settings Split:** The configuration has been split into three files for different environments:
+    *   `settings/base.py`: Contains all common settings shared across environments.
+    *   `settings/development.py`: Used for local development (`DEBUG = True`).
+    *   `settings/production.py`: Used on the PythonAnywhere server (`DEBUG = False`, `ALLOWED_HOSTS` configured).
+*   **Static Files:** Static assets (CSS, JS) are managed by Django. On the server, the `collectstatic` command is used to gather all static files into a single `staticfiles` directory, which is then served directly by PythonAnywhere's web servers for efficiency.
+*   **Database:** The local development environment uses a SQLite database located in a `data/` directory (which is ignored by Git). The production server uses its own separate SQLite database, also created from the `migrate` command.
+
+### How to Run
+
+*   **Locally (Development):**
+    ```
+    python manage.py runserver --settings=backtesting_platform.settings.development
+    ```
+*   **On the Server (Production):** The application is served via a WSGI configuration on PythonAnywhere, pointing to `backtesting_platform.settings.production`.

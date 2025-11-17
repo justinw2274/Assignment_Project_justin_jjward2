@@ -267,3 +267,18 @@ Refactoring the project's URL structure to use `include()` makes the project mor
     2.  **Trade Value per Strategy:** Shows each strategy and the sum of its associated trade quantities.
   - It also includes a line for the "Total Active Strategies."
   - The `{% empty %}` template tag is used in each table to show a user-friendly message if there is no data to display.
+
+
+
+--- Assignment 12: Deployment Notes ---
+
+- **Purpose of `collectstatic`:** The `collectstatic` command finds all static files from all Django apps (including the admin) and copies them into a single top-level directory specified by `STATIC_ROOT`. This allows a dedicated web server (like Nginx on PythonAnywhere) to serve these files directly and efficiently, without having to go through the Django application.
+
+- **Purpose of WSGI:** The Web Server Gateway Interface (WSGI) is a standard that allows the web server (Nginx) to communicate with the Python web application (Django). The `wsgi.py` file in our project acts as the entry point for the production server, loading our Django app and passing requests to it.
+
+- **Static Mapping on PythonAnywhere:** This configuration on the "Web" tab tells the PythonAnywhere web server where to find the static files that `collectstatic` gathered.
+  - The URL (`/static/`) is the prefix in the browser's address bar.
+  - The Directory (`/home/jjward2/Assignment_Project_justin_jjward2/staticfiles`) is the absolute path on the server's file system where those files are located.
+  This mapping allows the server to handle requests for static files directly, which is much faster.
+
+- **Virtual Environment on PythonAnywhere:** We create a virtual environment on the server to isolate our project's dependencies from other Python projects on the system. Using the `--system-site-packages` flag was crucial to leverage the pre-installed libraries like Django and Matplotlib, which allowed us to install our `requirements.txt` without exceeding the free account's disk quota.
