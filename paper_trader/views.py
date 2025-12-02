@@ -112,16 +112,16 @@ def strategy_create_fbv(request):
         'view_type': 'Function-Based View'
     })
 
-class StrategyCreateCBV(LoginRequiredMixin, CreateView):
-    model = Strategy
-    form_class = StrategyForm
-    template_name = 'paper_trader/strategy_form_cbv.html'
-    success_url = reverse_lazy('paper_trader:strategy_list_generic')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['view_type'] = 'Class-Based View'
-        return context
+# class StrategyCreateCBV(LoginRequiredMixin, CreateView):
+#     model = Strategy
+#     form_class = StrategyForm
+#     template_name = 'paper_trader/strategy_form_cbv.html'
+#     success_url = reverse_lazy('paper_trader:strategy_list_generic')
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['view_type'] = 'Class-Based View'
+#         return context
 
 
 @login_required
